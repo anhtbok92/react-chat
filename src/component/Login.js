@@ -19,12 +19,12 @@ class Login extends React.Component {
                                 <h2 className="text-center">Login Now</h2>
                                 <form className="login-form">
                                     <div className="form-group">
-                                        <label htmlFor="exampleInputEmail1" className="text-uppercase">Username</label>
+                                        <label htmlFor="email" className="text-uppercase">Email address</label>
                                         <input type="text" className="form-control" placeholder="" />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="exampleInputPassword1" className="text-uppercase">Password</label>
-                                        <input type="password" className="form-control" placeholder="" />
+                                        <label htmlFor="password" className="text-uppercase">Password</label>
+                                        <input type="password" name="password" id="password" className="form-control" placeholder="" />
                                     </div>
 
                                     <div className="form-check">
