@@ -25,6 +25,9 @@ class Login extends React.Component {
         firebase.auth()
             .signInWithEmailAndPassword(email_address, password)
             .then(user => {
+                console.log(user);
+                var user1 = firebase.auth().currentUser;
+                console.log(user1)
                 this.props.history.push('/chat-room');
             })
             .catch(log_error => {
