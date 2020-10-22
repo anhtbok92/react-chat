@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { fireStore } from '../../config/firebase'
 
 class LandingPage extends React.Component {
     constructor(props) {
@@ -7,6 +7,16 @@ class LandingPage extends React.Component {
         this.state = {
             username: ''
         }
+    }
+
+    componentDidMount() {
+        this.getListUser();
+    }
+
+    getListUser = async () => {
+        const result = await fireStore.collection('users').get();
+        console.log('result: ');
+        console.log(result)
     }
 
     render() {
