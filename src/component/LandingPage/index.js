@@ -1,24 +1,6 @@
 import React from 'react';
-import { fireStore } from '../../config/firebase'
 
 class LandingPage extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: ''
-        }
-    }
-
-    componentDidMount() {
-        this.getListUser();
-    }
-
-    getListUser = async () => {
-        const result = await fireStore.collection('users').get();
-        console.log('result: ');
-        console.log(result)
-    }
-
     render() {
         return (
             <main role="main">

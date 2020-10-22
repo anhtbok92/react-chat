@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import '../assets/App.css';
-import Navbar from './navbar/NavBar';
+import Navbar from './Navbar';
 import Register from './Auth/Register';
 import Login from './Auth/Login';
-import LandingPage from './LandingPage/LandingPage.js';
+import LandingPage from './LandingPage';
+import ChatRoom from "./ChatRoom";
 import firebase, { auth } from '../config/firebase';
 
 class App extends React.Component {
@@ -13,19 +14,21 @@ class App extends React.Component {
       this.state = {
           username : ''
       }
+      this.logOut.bind(this);
   }
 
   componentDidMount() {
       auth.onAuthStateChanged(username => {
-          console.log(username);
           if(username) {
               this.setState({ username })
           }
       });
   }
 
-  logOut = () => {
-      firebase.auth().signOut().then(window.location = "/");
+  logOut() {
+      firebase.auth().signOut().then(() => {
+          window.location = "/"
+      });
   }
 
   render() {
@@ -38,6 +41,7 @@ class App extends React.Component {
                   <Route path="/" exact render = {() => <LandingPage />} />
                   <Route path="/login" exact component = {Login} />
                   <Route path="/register" exact component = {Register} />
+                  <Route path="/chat-room" render = {() => <ChatRoom username={this.state.username} /> } />
               </Switch>
           </Router>
       );

@@ -10,25 +10,22 @@ class Login extends React.Component {
             password: '',
             log_error: ''
         }
-        this.handleChangeEmail.bind(this);
-        this.handleChangePassword.bind(this);
+        this.handleChangeForm.bind(this);
+        this.handleSubmit.bind(this);
     }
 
-    handleChangeEmail = e => {
-        this.setState({ email_address: e.target.value });
-    }
-
-    handleChangePassword = e => {
-        this.setState({ password : e.target.value });
+    handleChangeForm(e) {
+        console.log(e);
+        this.setState({ [e.target.name]: e.target.value });
     }
 
     handleSubmit = e => {
         e.preventDefault();
+        const { email_address, password } = this.state;
         firebase.auth()
-            .signInWithEmailAndPassword(this.state.email_address, this.state.password)
+            .signInWithEmailAndPassword(email_address, password)
             .then(user => {
-                console.log(user)
-                this.props.history.push('/');
+                this.props.history.push('/chat-room');
             })
             .catch(log_error => {
                 this.setState({log_error});
@@ -48,11 +45,11 @@ class Login extends React.Component {
                                 <form className="login-form" onSubmit={this.handleSubmit}>
                                     <div className="form-group">
                                         <label htmlFor="email" className="text-uppercase">Email address</label>
-                                        <input type="text" className="form-control" placeholder="" value={this.state.email_address} onChange={this.handleChangeEmail}/>
+                                        <input type="text" name="email_address" className="form-control" placeholder="" value={this.state.email_address} onChange={e => this.handleChangeForm(e) }/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="password" className="text-uppercase">Password</label>
-                                        <input type="password" name="password" id="password" className="form-control" placeholder="" onChange={this.handleChangePassword} />
+                                        <input type="password" name="password" id="password" className="form-control" placeholder="" onChange={e => this.handleChangeForm(e) } />
                                     </div>
 
                                     <div className="form-check">
