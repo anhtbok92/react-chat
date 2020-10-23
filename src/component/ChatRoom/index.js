@@ -12,23 +12,48 @@ class ChatRoom extends React.Component {
     }
 
     componentDidMount() {
-        const chatRef = firebase.database().ref('general');
-        chatRef.on('value', snapshot => {
-            const getChats = snapshot.val();
+        // const chatRef = firebase.database().ref('general');
+        // chatRef.on('value', snapshot => {
+        //     const getChats = snapshot.val();
+        //     let ascChats = [];
+        //     for(let chat in getChats){
+        //         if(getChats[chat].message !== ''){
+        //             ascChats.push({
+        //                 id: chat,
+        //                 message: getChats[chat].message,
+        //                 user: getChats[chat].user,
+        //                 date: getChats[chat].timestamp
+        //             });
+        //         }
+        //     }
+        //     const chat_box = ascChats.reverse();
+        //     this.setState({chat_box});
+        // });
+
+        let query = firebase.firestore()
+            .collection('messages')
+            .orderBy('timestamp', 'desc');
+
+        query.onSnapshot(function(snapshot) {
             let ascChats = [];
-            for(let chat in getChats){
-                if(getChats[chat].message !== ''){
+            snapshot.docChanges().forEach(function(change) {
+                console.log(change);
+                let message = change.doc.data();
+                if (change.type === 'added') {
                     ascChats.push({
-                        id: chat,
-                        message: getChats[chat].message,
-                        user: getChats[chat].user,
-                        date: getChats[chat].timestamp
-                    });
+                        id: change.doc.id,
+                        user: message.name,
+                        message: message.text,
+                        profilePicUrl: message.profilePicUrl,
+                        imageUrl: message.imageUrl,
+                        date: message.timestamp
+                    })
                 }
-            }
+            });
             const chat_box = ascChats.reverse();
             this.setState({chat_box});
-        });
+        }).bind(this);
+
     }
 
     handleChangeMessage = e => {
@@ -39,16 +64,31 @@ class ChatRoom extends React.Component {
 
     handleChat = e => {
         e.preventDefault();
-        if(this.state.message !== ''){
-            const chatRef = firebase.database().ref('general');
+        if(this.state.message !== '') {
+            // const chatRef = firebase.database().ref('general');
+            // const chat = {
+            //     message: this.state.message,
+            //     user: this.props.username.displayName,
+            //     timestamp: new Date().getTime()
+            // }
+            //
+            // chatRef.push(chat);
+            // this.setState({ message: '' });
             const chat = {
-                message: this.state.message,
-                user: this.props.username.displayName,
-                timestamp: new Date().getTime()
+                name: firebase.auth().currentUser.displayName,
+                text: this.state.message,
+                profilePicUrl: firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }
 
-            chatRef.push(chat);
-            this.setState({ message: '' });
+            firebase.firestore().collection('messages')
+                .add(chat)
+                .then(() => {
+                    this.setState({ message : '' });
+                })
+                .catch(function(error) {
+                console.error('Error writing new message to database', error);
+            });
         }
     }
 
