@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Loading from '../../component/Common/Loading'
 import firebase from '../../config/firebase'
 
 class Login extends React.Component {
@@ -8,10 +9,15 @@ class Login extends React.Component {
         this.state = {
             email_address: '',
             password: '',
-            log_error: ''
+            log_error: '',
+            loading: true
         }
         this.handleChangeForm.bind(this);
         this.handleSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({ loading: false });
     }
 
     handleChangeForm(e) {
@@ -21,17 +27,19 @@ class Login extends React.Component {
 
     handleSubmit = e => {
         e.preventDefault();
+        this.setState({ loading: true });
         const { email_address, password } = this.state;
         firebase.auth()
             .signInWithEmailAndPassword(email_address, password)
             .then(user => {
                 console.log(user);
-                var user1 = firebase.auth().currentUser;
-                console.log(user1)
+                // var user1 = firebase.auth().currentUser;
+                // console.log(user1)
                 this.props.history.push('/chat-room');
+                this.setState({ loading: false });
             })
             .catch(log_error => {
-                this.setState({log_error});
+                this.setState({log_error: log_error, loading: false });
             });
 
     }
@@ -72,6 +80,7 @@ class Login extends React.Component {
                         </div>
                     </div>
                 </section>
+                <Loading loading={this.state.loading} />
             </div>
         )
     }

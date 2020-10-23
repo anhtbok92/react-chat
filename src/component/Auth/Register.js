@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import firebase, { auth } from '../../config/firebase';
+import Loading from '../../component/Common/Loading'
 
 class Register extends React.Component {
     constructor(props) {
@@ -9,10 +10,15 @@ class Register extends React.Component {
             username: '',
             email_address: '',
             password: '',
-            log_error: null
+            log_error: null,
+            loading: true
         }
         this.handleChangeForm.bind(this);
         this.handleRegister.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({ loading: false });
     }
 
     handleChangeForm(e) {
@@ -21,6 +27,7 @@ class Register extends React.Component {
 
     handleRegister = e => {
         e.preventDefault();
+        this.setState({ loading: true });
         const { email_address, username, password } = this.state;
         firebase.auth()
             .createUserWithEmailAndPassword(email_address, password)
@@ -28,15 +35,16 @@ class Register extends React.Component {
                 firebase.auth().currentUser
                     .updateProfile({ displayName: username })
                     .then(() => {
-                        alert("Register Success !");
-                        this.props.history.push('/');
+                        alert('Welcome to react chat team !');
+                        this.props.history.push('/chat-room');
+                        this.setState({ loading: false });
                     })
                     .catch(log_error => {
-                        this.setState({ log_error })
+                        this.setState({ log_error, loading: false })
                     })
             })
             .catch(log_error => {
-               this.setState({ log_error })
+               this.setState({ log_error, loading: false })
             });
     }
 
@@ -76,6 +84,7 @@ class Register extends React.Component {
                         </div>
                     </div>
                 </section>
+                <Loading loading={this.state.loading} />
             </div>
         )
     }
