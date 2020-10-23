@@ -12,13 +12,13 @@ class ChatRoom extends React.Component {
     }
 
     componentDidMount() {
-        const chatRef = firebase.database().ref('general');
+        const chatRef = firebase.database().ref('general').orderByChild('timestamp');
         chatRef.on('value', snapshot => {
             const getChats = snapshot.val();
-            let ascChats = [];
+            let chats = [];
             for(let chat in getChats){
                 if(getChats[chat].message !== ''){
-                    ascChats.push({
+                    chats.push({
                         id: chat,
                         message: getChats[chat].message,
                         user: getChats[chat].user,
@@ -26,14 +26,12 @@ class ChatRoom extends React.Component {
                     });
                 }
             }
-            const chat_box = ascChats.reverse();
+            const chat_box = chats;
             this.setState({chat_box});
         });
     }
 
     handleChangeMessage = e => {
-        console.log(e.target.name);
-        console.log(e.target.value);
         this.setState({[e.target.name]: e.target.value});
     }
 
@@ -50,6 +48,7 @@ class ChatRoom extends React.Component {
             chatRef.push(chat);
             this.setState({ message: '' });
         }
+        window.scrollTo(0, 0);
     }
 
     render() {
@@ -92,15 +91,11 @@ class ChatRoom extends React.Component {
                                     <div className="msg_history">
                                         {this.state.chat_box.map((chat, key) => {
                                             return(
-                                                <div className='incoming_msg' key={key}>
-                                                    {/*<div className="incoming_msg_img">*/}
-                                                    {/*    /!*<img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"/>*!/*/}
-                                                    {/*    <p>{chat.user} : </p>*/}
-                                                    {/*</div>*/}
-                                                    <div className="received_msg">
-                                                        <div className="received_withd_msg">
-                                                            <p>{chat.user + ' : ' + chat.message + ' ' + new Date(chat.date).getDate() + '/' + (new Date(chat.date).getMonth()+1)}</p>
-                                                        </div>
+                                                <div className='media mt-4' key={key}>
+                                                    <img className="d-flex rounded-circle avatar z-depth-1-half mr-3" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-10.jpg" alt="Avatar" />
+                                                    <div className="media-body">
+                                                        <h5 className="mt-0 font-weight-bold blue-text">{chat.user}</h5>
+                                                        {chat.message}
                                                     </div>
                                                 </div>
                                             );

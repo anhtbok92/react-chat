@@ -170,3 +170,11 @@ img{ max-width:100%;}
   margin-left: 45%;
   margin-top: 15%;
 }
+
+.media .avatar {
+  width: 64px !important;
+}
+
+.blue-text {
+  color: #2196f3 !important;
+}
